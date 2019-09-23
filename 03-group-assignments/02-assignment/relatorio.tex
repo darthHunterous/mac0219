@@ -1,0 +1,66 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, total={6.5in, 9.5in}]{geometry}
+%\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+%\usepackage{ae,aecompl,aeguill}
+%\usepackage{showframe}% just to show page geometry, not needed
+\setlength{\parskip}{1mm plus 4mm minus 3mm}
+
+\begin{document}
+
+% ========== Edit your name here
+\author{
+    Rodrigo Orem\\
+    \texttt{8921590}
+    \and
+    Édio Cerati\\
+    \texttt{9762678}
+    \and
+    Thiago Teixeira\\
+    \texttt{10736987}
+}
+
+\title{\vspace{-2em}Relatório do EP2 -- Mandelbrot}
+\maketitle
+
+Neste EP, desenvolvemos um algoritmo para gerar imagens fractais baseado
+no conjunto de Mandelbrot. Então, parelizamos em OpenMP e CUDA para
+comparar os ganhos de desempenho.
+
+Nossa primeira versão do algoritmo, sequencial, não oferecia ganhos
+significativos de desempenho ao paralelizar com OpenMP. Percebemos que
+isso ocorria porque estávamos usando um número baixo para M, que é o
+número máximo de iterações usado para definir se um ponto pertence ou
+não a um conjunto. No caso, se $|z_j∣ \leq 2$ para todo $j < M$, então o
+ponto $z_j$ pertence ao conjunto e deve ser pintado de preto.
+
+Começamos usando $M=50$, mas paralelizar esse número não oferecia ganhos
+de desempenho: em alguns casos até ficava mais lento, devido ao
+overhead. Quando aumentamos para $M=1000$, obtivemos resultados
+significativos de ganho de desempenho.
+
+A tabela a seguir mostra os resultados de 20 execuções do programa no
+servidor Dota da Rede Linux. Os resultados estão disponíveis na pasta
+{\tt test/}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lll}
+\hline
+\multicolumn{1}{c}{Threads} &
+\multicolumn{1}{l}{Média Tempo} &
+\multicolumn{1}{l}{Desvio Padrão} \\
+\hline
+1 & 10,10 & 0,128 \\
+8 & 1,51 & 0,040 \\
+16 & 0,94 & 0,030
+\end{tabular}
+\end{table}
+
+Como podemos ver pela tabela, ao utilizar OpenMP conseguimos executar o
+programa 10,7 vezes rápido ao usar 16 threads.
+
+\end{document}
